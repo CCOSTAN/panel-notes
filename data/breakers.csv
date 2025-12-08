@@ -1,0 +1,41 @@
+id,side,row,label,load_type,status,notes,tags
+A1,A,1,Kitchen / Refrigerator,Appliance,Active,,kitchen
+A2,A,2,Entry Foyer,Unknown,Active,,
+A3,A,3,SPARE,HVAC,Spare,,furnace
+A4,A,4,SPARE,Unknown,Spare,,
+A5,A,5,Furnace #2,Appliance,Active,Double-pole 240V (Furnace),kitchen
+A6,A,6,Water Heater #2,Unknown,Active,,
+A7,A,7,Cook Top #2,Appliance,Active,,kitchen
+A8,A,8,Office,Unknown,Active,,
+A9,A,9,Kitchen special,Outlet,Active,,kitchen
+A10,A,10,Master Bedroom,Unknown,Active,,
+A11,A,11,Bathroom GFCIs,Appliance,Active,,kitchen
+A12,A,12,Bedroom #2,Unknown,Active,,
+A13,A,13,Island & Kitchen Counter,Appliance,Active,,kitchen
+A14,A,14,Garage,Unknown,Active,,
+A15,A,15,Washer,Appliance,Active,,laundry
+A16,A,16,Smoke Detectors,Unknown,Active,,
+A17,A,17,Garage Outlet,Appliance,Active,,garage
+A18,A,18,Bedroom Fans &  Pool Bath,Unknown,Active,"Bedroom 2, 3, 4, Halls",
+A19,A,19,Master Bdrm & Floods,Appliance,Active,Backyard Flood Lights,garage
+A20,A,20,Kitchen Lights,Unknown,Active,,
+B1,B,1,SPARE,Lighting,Spare,,garage
+B2,B,2,SPARE,Appliance,Spare,,appliance
+B3,B,3,Furnace #1,Outlet,Active,,office
+B4,B,4,Water Heater #1,Lighting,Active,,kitchen
+B5,B,5,Cook Top #1,Outlet,Active,,bath
+B6,B,6,Unknown,Unknown,Active,,garage
+B7,B,7,Microwave,Unknown,Active,,garage
+B8,B,8,Office,Unknown,Active,,safety
+B9,B,9,Dishwasher,Lighting,Active,,living
+B10,B,10,Master Bedroom,Outlet,Active,,bedroom
+B11,B,11,Garbage Disposal,Unknown,Active,,
+B12,B,12,Bedroom #3,Unknown,Active,,
+B13,B,13,Nook Dining Room,Unknown,Active,,
+B14,B,14,Garage utility,Unknown,Active,,garage
+B15,B,15,Home Director,Unknown,Active,Not sure what this is.,
+B16,B,16,Upstairs Bathroom,Unknown,Active,,
+B17,B,17,Garage Outlet #2,Unknown,Spare,,
+B18,B,18,Living Room | Formal Dining,Unknown,Active,,
+B19,B,19,Unknown,Unknown,Spare,,
+B20,B,20,Master Bathroom,Unknown,Active,,
