@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-Ready-green)](https://nodejs.org/)
 [![Docker Ready](https://img.shields.io/badge/Docker-Ready-blue)](https://www.docker.com/)
-
+<br><img alt="Panel overview" src="https://github.com/user-attachments/assets/7f746eac-156a-4c3e-87a1-9fe119eb4d83" width="200" />
 ## 🎯 Why Panel Notes?
 
 Got new garage lights? Need to know what's behind breaker B8? Panel Notes is the answer. It grew out of [this Home Assistant issue](https://github.com/CCOSTAN/Home-AssistantConfig/issues/1547) after realizing a handwritten directory on the panel door wasn't cutting it anymore.
@@ -16,7 +16,6 @@ Got new garage lights? Need to know what's behind breaker B8? Panel Notes is the
 - 📱 Open the app instantly from a QR code taped to the panel
 
 <div align="center">
-  <img alt="Panel overview" src="https://github.com/user-attachments/assets/7f746eac-156a-4c3e-87a1-9fe119eb4d83" width="350" />
   <img alt="Breaker details" src="https://github.com/user-attachments/assets/69ee1785-6b18-4d0d-a0fd-d299a98c76d9" width="350" />
   <img alt="Mobile view" src="https://github.com/user-attachments/assets/a4f0c177-fd55-4eef-adc7-930c8bcac695" width="350" />
 </div>
@@ -152,3 +151,4 @@ MIT – see [LICENSE](./LICENSE) for details.
 <div align="center">
   <strong>Made with ⚡ for home automation enthusiasts everywhere</strong>
 </div>
+
