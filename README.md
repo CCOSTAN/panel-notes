@@ -9,6 +9,10 @@ The goal is simple:
 - See the whole panel at a glance (odd on the left, even on the right).
 - Double-click a breaker to see its label, notes, and linked devices.
 - Open the app instantly from a QR code taped to the panel.
+<br>From this: 
+<img width="452" height="559" alt="image" src="https://github.com/user-attachments/assets/7f746eac-156a-4c3e-87a1-9fe119eb4d83" />
+To this: 
+<img width="445" height="828" alt="image" src="https://github.com/user-attachments/assets/2a3e6ae4-ca11-4bc9-aeed-92994d89ac28" />
 
 ## Features
 
@@ -84,7 +88,8 @@ These are intentionally simple so Home Assistant or other tools can query them l
 - Breaker
   - id – internal ID (e.g., A1, B2).
   - side – A or B.
-  - ow – numeric row (1–20).
+  - 
+ow – numeric row (1–20).
   - label – human-friendly description.
   - load_type – optional type (Lighting, Outlet, etc.).
   - 
@@ -117,3 +122,4 @@ See CONTRIBUTING.md for ideas and guidelines. PRs that improve usability, layout
 ## License
 
 MIT – see LICENSE for details.
+
