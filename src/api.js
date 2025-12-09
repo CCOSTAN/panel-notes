@@ -9,7 +9,10 @@ async function fetchJson(path, options = {}) {
     const text = await res.text();
     throw new Error(text || res.statusText);
   }
-  return res.json();
+  // Some endpoints (e.g., DELETE 204) return no JSON body
+  if (res.status === 204) return null;
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
 }
 
 export async function getBreakers() {
@@ -34,6 +37,10 @@ export async function createDevice(payload) {
 
 export async function updateDevice(id, payload) {
   return fetchJson(`/api/device/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+}
+
+export async function deleteDevice(id) {
+  return fetchJson(`/api/device/${id}`, { method: 'DELETE' });
 }
 
 export async function searchEntities(query) {

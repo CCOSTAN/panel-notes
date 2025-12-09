@@ -5,6 +5,7 @@ import {
   getDevices,
   saveBreaker,
   searchEntities,
+  deleteDevice,
   updateDevice
 } from './api.js';
 import Dashboard from './pages/Dashboard.jsx';
@@ -95,6 +96,17 @@ export default function App() {
     }
   }
 
+  async function handleDeleteDevice(id) {
+    try {
+      await deleteDevice(id);
+      const next = devices.filter((d) => d.id !== id);
+      setDevices(next);
+      await refreshData();
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
   async function handleSearch(query) {
     if (!query) {
       setSearchResults({ breakers: [], devices: [] });
@@ -151,6 +163,7 @@ export default function App() {
               devices={devices}
               onCreateDevice={handleCreateDevice}
               onUpdateDevice={handleUpdateDevice}
+              onDeleteDevice={handleDeleteDevice}
             />
           ) : (
             <SearchPage

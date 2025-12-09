@@ -140,6 +140,25 @@ p {
   flex-wrap: wrap;
 }
 
+.pill-list {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.pill-remove {
+  margin-left: 6px;
+  background: transparent;
+  border: none;
+  color: var(--color-muted);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.pill-remove:hover {
+  color: var(--color-accent);
+}
+
 .card {
   border: 1px solid var(--color-border);
   background: var(--color-card);
@@ -334,8 +353,10 @@ label {
 
 .breaker-select__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: var(--space-xs);
+  max-height: 480px;
+  overflow-y: auto;
 }
 
 .breaker-select__item {

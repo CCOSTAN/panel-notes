@@ -2,16 +2,24 @@ import React, { useMemo, useState } from 'react';
 import DeviceRow from '../components/DeviceRow.jsx';
 import { slotNumber } from '../utils/slots.js';
 
-export default function DevicesPage({ breakers, devices, onCreateDevice, onUpdateDevice }) {
+export default function DevicesPage({ breakers = [], devices = [], onCreateDevice, onUpdateDevice, onDeleteDevice }) {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name: '', type: '', notes: '', linkedBreakers: [] });
 
-  const breakersLookup = useMemo(
+  const breakerList = useMemo(
     () =>
-      breakers.reduce((acc, b) => {
-        acc[b.id] = `#${slotNumber(b)} • ${b.label}`;
-        return acc;
-      }, {}),
+      breakers
+        .slice()
+        .sort((a, b) => {
+          // odd (left) then even (right), preserving row order
+          const aNum = Number(a.row) * 2 - (a.side === 'A' ? 1 : 0);
+          const bNum = Number(b.row) * 2 - (b.side === 'A' ? 1 : 0);
+          return aNum - bNum;
+        })
+        .map((b) => ({
+          id: b.id,
+          label: `${slotNumber(b)}${b.side} • ${b.label}`
+        })),
     [breakers]
   );
 
@@ -66,14 +74,14 @@ export default function DevicesPage({ breakers, devices, onCreateDevice, onUpdat
             <fieldset className="breaker-select">
               <legend>Link breakers</legend>
               <div className="breaker-select__grid">
-                {breakers.map((b) => (
+                {breakerList.map((b) => (
                   <label key={b.id} className="breaker-select__item">
                     <input
                       type="checkbox"
                       checked={form.linkedBreakers.includes(b.id)}
                       onChange={() => toggleBreaker(b.id)}
                     />
-                    <span>#{slotNumber(b)} • {b.label}</span>
+                    <span>{b.label}</span>
                   </label>
                 ))}
               </div>
@@ -91,7 +99,13 @@ export default function DevicesPage({ breakers, devices, onCreateDevice, onUpdat
       <div className="stack gap-md">
         {devices.length === 0 && <div className="muted">No devices yet.</div>}
         {devices.map((device) => (
-          <DeviceRow key={device.id} device={device} breakersLookup={breakersLookup} onUpdate={onUpdateDevice} />
+          <DeviceRow
+            key={device.id}
+            device={device}
+            breakers={breakers}
+            onUpdate={onUpdateDevice}
+            onDelete={onDeleteDevice}
+          />
         ))}
       </div>
     </div>

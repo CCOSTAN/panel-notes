@@ -14,6 +14,7 @@ import {
   updateBreaker,
   updateDevice
 } from './dataStore.js';
+import { deleteDevice } from './dataStore.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -68,6 +69,12 @@ app.put('/api/device/:id', async (req, res) => {
   const device = await updateDevice(req.params.id, req.body);
   if (!device) return res.status(404).json({ error: 'Device not found' });
   res.json(device);
+});
+
+app.delete('/api/device/:id', async (req, res) => {
+  const ok = await deleteDevice(req.params.id);
+  if (!ok) return res.status(404).json({ error: 'Device not found' });
+  res.status(204).send();
 });
 
 app.get('/api/search', async (req, res) => {

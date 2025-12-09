@@ -236,6 +236,14 @@ export async function updateDevice(id, payload) {
   return devices[idx];
 }
 
+export async function deleteDevice(id) {
+  const devices = await getDevices();
+  const filtered = devices.filter((d) => d.id !== id);
+  if (filtered.length === devices.length) return false;
+  await saveDevices(filtered);
+  return true;
+}
+
 export async function searchEntities(query) {
   const q = query.toLowerCase();
   const [breakers, devices] = await Promise.all([getBreakersWithDevices(), getDevices()]);

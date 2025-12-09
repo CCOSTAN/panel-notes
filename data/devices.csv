@@ -1,2 +1,22 @@
 id,name,type,notes,linked_breakers
-D1,Garage Sconces,Light,Outdoor garage sconces powered by right slot 1,A2
+D16,Bathroom GFCIs,Switch,Protected bathroom receptacles,A11
+D13,Bedroom #2 Lights,Light,Bedroom 2 ceiling set,A12
+D14,Bedroom #3 Lights,Light,Bedroom 3 ceiling set,B12
+D22,Dinette Lights,Light,Breakfast nook/dinette lights,B13
+D7,Dining Room Lights,Light,Formal dining chandelier/cans,B18
+D18,Dishwasher,Switch,Dishwasher circuit,B9
+D8,Foyer Lights,Light,Front foyer entry lights,A2
+D3,Garage LEDs,Light,Grouped garage LED fixtures (large/small/snip),A14
+D19,Garbage Disposal,Switch,Kitchen disposal circuit,B11
+D11,Hallway Lights,Light,Downstairs hall grouping,A18
+D4,Kitchen Island Pendants,Light,Island and counter pendant set,A13
+D2,Kitchen Lights,Light,Main kitchen ceiling group,A20
+D6,Living Room Accents,Light,Accent lamps and TV/couch lighting,B18
+D5,Living Room Lights,Light,Main living room ceiling group,B18
+D15,Master Bedroom Lights,Light,Master bedroom ceiling set,"B10,A10"
+D17,Microwave,Switch,Kitchen microwave circuit,B7
+D9,Outdoor Front Lights,Light,Front porch/flood grouping,A2
+D10,Outdoor Sconces,Light,Garage/front sconces grouping,A2
+D20,Refrigerator,Switch,Kitchen refrigerator circuit,A1
+D12,Upstairs Lights,Light,Upstairs hall and landing grouping,A18
+D21,Washer,Switch,Laundry washer circuit,A15
