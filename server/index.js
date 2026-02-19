@@ -9,6 +9,7 @@ import {
   getBreakersWithDevices,
   getDevice,
   getDevices,
+  getDeviceTypes,
   getLightToBreakerMap,
   searchEntities,
   updateBreaker,
@@ -51,6 +52,11 @@ app.put('/api/breaker/:id', async (req, res) => {
 app.get('/api/devices', async (_req, res) => {
   const devices = await getDevices();
   res.json(devices);
+});
+
+app.get('/api/device-types', async (_req, res) => {
+  const types = await getDeviceTypes();
+  res.json(types);
 });
 
 app.post('/api/device', async (req, res) => {

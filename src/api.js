@@ -46,3 +46,7 @@ export async function deleteDevice(id) {
 export async function searchEntities(query) {
   return fetchJson(`/api/search?q=${encodeURIComponent(query)}`);
 }
+
+export async function getDeviceTypes() {
+  return fetchJson('/api/device-types');
+}

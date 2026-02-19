@@ -3,6 +3,7 @@ import {
   createDevice,
   getBreakers,
   getDevices,
+  getDeviceTypes,
   saveBreaker,
   searchEntities,
   deleteDevice,
@@ -73,6 +74,7 @@ export default function App() {
   usePullToRefreshReload();
   const [breakers, setBreakers] = useState([]);
   const [devices, setDevices] = useState([]);
+  const [deviceTypes, setDeviceTypes] = useState([]);
   const [selectedBreakerId, setSelectedBreakerId] = useState(null);
   const [showEditor, setShowEditor] = useState(false);
   const [view, setView] = useState('dashboard');
@@ -98,9 +100,14 @@ export default function App() {
   );
 
   async function refreshData() {
-    const [breakerData, deviceData] = await Promise.all([getBreakers(), getDevices()]);
+    const [breakerData, deviceData, deviceTypesData] = await Promise.all([
+      getBreakers(),
+      getDevices(),
+      getDeviceTypes()
+    ]);
     setBreakers(breakerData);
     setDevices(deviceData);
+    setDeviceTypes(deviceTypesData);
     if (!selectedBreakerId && breakerData.length) {
       setSelectedBreakerId(breakerData[0].id);
     }
@@ -212,6 +219,7 @@ export default function App() {
             <DevicesPage
               breakers={breakers}
               devices={devices}
+              deviceTypes={deviceTypes}
               onCreateDevice={handleCreateDevice}
               onUpdateDevice={handleUpdateDevice}
               onDeleteDevice={handleDeleteDevice}
@@ -271,6 +279,7 @@ export default function App() {
             <BreakerDetail
               breaker={selectedBreaker}
               devices={devices}
+              deviceTypes={deviceTypes}
               onSave={async (payload) => {
                 await handleSaveBreaker(payload);
                 setShowEditor(false);

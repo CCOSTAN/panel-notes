@@ -5,6 +5,7 @@ import { slotNumber } from '../utils/slots.js';
 export default function DevicesPage({
   breakers = [],
   devices = [],
+  deviceTypes = [],
   onCreateDevice,
   onUpdateDevice,
   onDeleteDevice,
@@ -72,7 +73,14 @@ export default function DevicesPage({
             </label>
             <label>
               Type
-              <input value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} />
+              <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
+                <option value="">Select type...</option>
+                {deviceTypes.map((type) => (
+                  <option key={type.id} value={type.name}>
+                    {type.name}
+                  </option>
+                ))}
+              </select>
             </label>
             <label>
               Notes
@@ -110,6 +118,7 @@ export default function DevicesPage({
             key={device.id}
             device={device}
             breakers={breakers}
+            deviceTypes={deviceTypes}
             onUpdate={onUpdateDevice}
             onDelete={onDeleteDevice}
             onSelectBreaker={onSelectBreaker}

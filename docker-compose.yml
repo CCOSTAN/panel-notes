@@ -2,6 +2,7 @@ version: '3.9'
 services:
   panel-notes:
     build: .
+    restart: unless-stopped
     ports:
       - '8080:8080'
     environment:

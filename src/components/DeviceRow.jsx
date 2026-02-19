@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { slotNumber } from '../utils/slots.js';
 
-export default function DeviceRow({ device, breakers = [], onUpdate, onDelete, onSelectBreaker }) {
+export default function DeviceRow({ device, breakers = [], deviceTypes = [], onUpdate, onDelete, onSelectBreaker }) {
   const [editing, setEditing] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const [pickerSelection, setPickerSelection] = useState(new Set());
@@ -80,7 +80,14 @@ export default function DeviceRow({ device, breakers = [], onUpdate, onDelete, o
           </label>
           <label>
             Type
-            <input name="type" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} />
+            <select name="type" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
+              <option value="">Select type...</option>
+              {deviceTypes.map((type) => (
+                <option key={type.id} value={type.name}>
+                  {type.name}
+                </option>
+              ))}
+            </select>
           </label>
           <label>
             Notes

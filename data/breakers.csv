@@ -1,5 +1,5 @@
 id,side,row,label,load_type,status,notes,tags
-A1,A,1,Kitchen / Refrigerator,Appliance,Active,,kitchen
+A1,A,1,Kitchen / Refrigerator,Appliance,Active,,"kitchen,devices"
 A2,A,2,Entry Foyer,Unknown,Active,covers the front outdoor lights too,
 A3,A,3,SPARE,HVAC,Spare,,furnace
 A4,A,4,SPARE,Unknown,Spare,,

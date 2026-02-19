@@ -5,6 +5,7 @@ D14,Bedroom #3 Lights,Light,Bedroom 3 ceiling set,B12
 D22,Dinette Lights,Light,Breakfast nook/dinette lights,B13
 D7,Dining Room Lights,Light,Formal dining chandelier/cans,B18
 D18,Dishwasher,Switch,Dishwasher circuit,B9
+DEV-JgMbVq,emma's bedside light,Light,,A1
 D8,Foyer Lights,Light,Front foyer entry lights,A2
 D3,Garage LEDs,Light,Grouped garage LED fixtures (large/small/snip),A14
 D19,Garbage Disposal,Switch,Kitchen disposal circuit,B11
@@ -17,7 +18,8 @@ D15,Master Bedroom Lights,Light,Master bedroom ceiling set,"B10,A10"
 D17,Microwave,Switch,Kitchen microwave circuit,B7
 D9,Outdoor Front Lights,Light,Front porch/flood grouping,A2
 D10,Outdoor Sconces,Light,Garage/front sconces grouping,A2
-D20,Refrigerator,Switch,Kitchen refrigerator circuit,A1
+D20,Refrigerator,Switch,Kitchen refrigerator circuit,
+DEV-hW25tM,Rheem Water Heater,Water Heater,,"B4,A6"
 D12,Upstairs Lights,Light,Upstairs hall and landing grouping,A18
 D21,Washer,Switch,Laundry washer circuit,A15
-DEV-hW25tM,Rheem Water Heater,Water Heater,,"B4,A6"
+DEV-GC0ZsT,Clayton Light,Light,,B1

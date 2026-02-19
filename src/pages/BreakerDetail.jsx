@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { slotNumber } from '../utils/slots.js';
 
-export default function BreakerDetail({ breaker, devices, onSave, readOnly = false, onRequestEdit }) {
+export default function BreakerDetail({ breaker, devices, deviceTypes = [], onSave, onCreateDevice, readOnly = false, onRequestEdit }) {
   const [form, setForm] = useState(() => ({
     label: '',
     load_type: 'Unknown',
@@ -11,6 +11,8 @@ export default function BreakerDetail({ breaker, devices, onSave, readOnly = fal
   }));
   const [showDevicePicker, setShowDevicePicker] = useState(false);
   const [pickerSelection, setPickerSelection] = useState(new Set());
+  const [showNewDeviceForm, setShowNewDeviceForm] = useState(false);
+  const [newDeviceForm, setNewDeviceForm] = useState({ name: '', type: '', notes: '' });
 
   useEffect(() => {
     if (breaker) {
@@ -68,6 +70,29 @@ export default function BreakerDetail({ breaker, devices, onSave, readOnly = fal
     }));
     setPickerSelection(new Set());
     setShowDevicePicker(false);
+  }
+
+  async function handleCreateNewDevice(e) {
+    e.preventDefault();
+    if (!onCreateDevice) return;
+
+    const payload = {
+      name: newDeviceForm.name,
+      type: newDeviceForm.type || 'Device',
+      notes: newDeviceForm.notes,
+      linkedBreakers: [breaker.id]
+    };
+
+    const created = await onCreateDevice(payload);
+    if (created) {
+      setForm((prev) => ({
+        ...prev,
+        linkedDeviceIds: [...prev.linkedDeviceIds, created.id]
+      }));
+      setNewDeviceForm({ name: '', type: '', notes: '' });
+      setShowNewDeviceForm(false);
+      setShowDevicePicker(false);
+    }
   }
 
   function handleSubmit(e) {
@@ -143,7 +168,6 @@ export default function BreakerDetail({ breaker, devices, onSave, readOnly = fal
               <button
                 type="button"
                 className="chip-button"
-                disabled={unassignedDevices.length === 0}
                 onClick={() => setShowDevicePicker(true)}
               >
                 Add devices{unassignedDevices.length ? ` (${unassignedDevices.length})` : ''}
@@ -189,37 +213,93 @@ export default function BreakerDetail({ breaker, devices, onSave, readOnly = fal
             </div>
             <div className="card-header">
               <div>
-                <p className="eyebrow">Unassigned devices</p>
-                <h3>Link devices to this breaker</h3>
+                <p className="eyebrow">{showNewDeviceForm ? 'New device' : 'Unassigned devices'}</p>
+                <h3>{showNewDeviceForm ? 'Create and link device' : 'Link devices to this breaker'}</h3>
               </div>
             </div>
-            {unassignedDevices.length === 0 ? (
-              <p className="muted" style={{ padding: '0 var(--space-md) var(--space-md)' }}>
-                No unassigned devices available.
-              </p>
-            ) : (
-              <div className="breaker-select__grid" style={{ padding: '0 var(--space-md) var(--space-md)' }}>
-                {unassignedDevices.map((device) => (
-                  <label key={device.id} className="breaker-select__item">
-                    <input
-                      type="checkbox"
-                      checked={pickerSelection.has(device.id)}
-                      onChange={() => handlePickerToggle(device.id)}
-                    />
-                    <span>
-                      {device.name} • {device.type}
-                    </span>
-                  </label>
-                ))}
-              </div>
+
+            {!showNewDeviceForm && (
+              <>
+                {unassignedDevices.length === 0 ? (
+                  <p className="muted" style={{ padding: '0 var(--space-md) var(--space-md)' }}>
+                    No unassigned devices available.
+                  </p>
+                ) : (
+                  <div className="breaker-select__grid" style={{ padding: '0 var(--space-md) var(--space-md)' }}>
+                    {unassignedDevices.map((device) => (
+                      <label key={device.id} className="breaker-select__item">
+                        <input
+                          type="checkbox"
+                          checked={pickerSelection.has(device.id)}
+                          onChange={() => handlePickerToggle(device.id)}
+                        />
+                        <span>
+                          {device.name} • {device.type}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
+
+            {showNewDeviceForm && (
+              <form className="form-grid" onSubmit={handleCreateNewDevice} style={{ padding: '0 var(--space-md) var(--space-md)' }}>
+                <label>
+                  Name *
+                  <input
+                    required
+                    value={newDeviceForm.name}
+                    onChange={(e) => setNewDeviceForm({ ...newDeviceForm, name: e.target.value })}
+                  />
+                </label>
+                <label>
+                  Type
+                  <select
+                    value={newDeviceForm.type}
+                    onChange={(e) => setNewDeviceForm({ ...newDeviceForm, type: e.target.value })}
+                  >
+                    <option value="">Select type...</option>
+                    {deviceTypes.map((type) => (
+                      <option key={type.id} value={type.name}>
+                        {type.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="full">
+                  Notes
+                  <textarea
+                    value={newDeviceForm.notes}
+                    onChange={(e) => setNewDeviceForm({ ...newDeviceForm, notes: e.target.value })}
+                  />
+                </label>
+              </form>
+            )}
+
             <div className="actions" style={{ padding: 'var(--space-md)' }}>
-              <button type="button" className="ghost" onClick={() => setShowDevicePicker(false)}>
-                Cancel
-              </button>
-              <button type="button" onClick={handlePickerAdd} disabled={pickerSelection.size === 0}>
-                Add selected
-              </button>
+              {!showNewDeviceForm ? (
+                <>
+                  <button type="button" className="ghost" onClick={() => setShowDevicePicker(false)}>
+                    Cancel
+                  </button>
+                  <button type="button" className="ghost" onClick={() => setShowNewDeviceForm(true)}>
+                    Create new device
+                  </button>
+                  <button type="button" onClick={handlePickerAdd} disabled={pickerSelection.size === 0}>
+                    Add selected
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button type="button" className="ghost" onClick={() => setShowNewDeviceForm(false)}>
+                    Back
+                  </button>
+                  <button type="button" onClick={handleCreateNewDevice} disabled={!newDeviceForm.name}>
+                    Create & link
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

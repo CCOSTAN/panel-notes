@@ -7,6 +7,7 @@ import { nanoid } from 'nanoid';
 const DATA_DIR = process.env.DATA_DIR || path.join(process.cwd(), 'data');
 const BREAKERS_FILE = path.join(DATA_DIR, 'breakers.csv');
 const DEVICES_FILE = path.join(DATA_DIR, 'devices.csv');
+const DEVICE_TYPES_FILE = path.join(DATA_DIR, 'device_types.csv');
 
 const breakerColumns = ['id', 'side', 'row', 'label', 'load_type', 'status', 'notes', 'tags'];
 const deviceColumns = ['id', 'name', 'type', 'notes', 'linked_breakers'];
@@ -276,4 +277,13 @@ export async function getLightToBreakerMap(deviceId) {
   const breakers = await getBreakersWithDevices();
   const linked = breakers.filter((b) => device.linked_breakers.includes(b.id));
   return { device, breakers: linked };
+}
+
+export async function getDeviceTypes() {
+  await ensureDataDir();
+  const rows = await readCsv(DEVICE_TYPES_FILE);
+  return rows.map((row) => ({
+    id: row.id,
+    name: row.name
+  }));
 }
