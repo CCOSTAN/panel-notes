@@ -7,7 +7,7 @@ Panel Notes is a mobile-first, CSV-backed electrical breaker mapping application
 - **Storage**: Flat CSV files in `./data` (`breakers.csv`, `devices.csv`).
 - **Path**: `/home/hass/docker_files/panel-notes`
 - **Compose Service**: `panel_notes` (defined in the root `docker-compose.yaml`).
-- **Command**: `ssh -o RemoteCommand=none -o RequestTTY=no -T docker_69 "cd /home/hass/docker_files && docker compose up -d --build panel_notes"`
+- **Command**: `ssh -o RemoteCommand=none -o RequestTTY=no -T docker69 "cd /home/hass/docker_files && docker compose up -d --build panel_notes"`
 
 ## Design System (Glassmorphism)
 The app uses a modern "Glassmorphism" aesthetic:
@@ -26,4 +26,4 @@ The app uses a modern "Glassmorphism" aesthetic:
 ## Core Logic
 - **Append-Only (mostly)**: Backend mostly appends/updates CSV rows.
 - **Data Dir**: App data lives at `./panel-notes/data` (bind mounted to `/app/data` in container).
-- **Port**: Runs on port 8080 internally and externally on `docker_69`.
+- **Port**: Runs on port 8080 internally and externally on `docker_69`; keep `http://192.168.10.69:8080` stable because the physical panel QR code points there.

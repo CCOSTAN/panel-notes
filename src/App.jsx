@@ -250,6 +250,27 @@ export default function App() {
         ))}
       </nav>
 
+      <footer className="app-footer">
+        <div className="footer-links">
+          <span className="footer-copy">c {new Date().getFullYear()} vCloudInfo.com</span>
+          <a href="https://www.vcloudinfo.com" target="_blank" rel="noopener noreferrer">
+            Home
+          </a>
+          <a href="https://x.com/ccostan" target="_blank" rel="noopener noreferrer">
+            Follow on X
+          </a>
+          <a href="https://github.com/CCOSTAN" target="_blank" rel="noopener noreferrer">
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/in/ccostan/" target="_blank" rel="noopener noreferrer">
+            LinkedIn
+          </a>
+          <a href="/panel-photo" target="_blank" rel="noopener noreferrer">
+            Panel Photo
+          </a>
+        </div>
+      </footer>
+
       {showEditor && selectedBreaker && (
         <div
           className="modal-backdrop"

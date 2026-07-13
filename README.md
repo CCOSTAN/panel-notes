@@ -68,6 +68,8 @@ docker compose up --build -d
 
 Data persists via bind mount (`./data:/app/data`). Change the port by setting `PORT` in `.env`.
 
+Optional: add a photo of your real panel at `./data/actual Panel.jpg`. The app serves it at `GET /panel-photo` (also linked in the footer).
+
 ## ⚙️ Configuration
 
 ```bash
@@ -93,6 +95,7 @@ GET    /api/device/{id}                  # Get device details
 PUT    /api/device/{id}                  # Update device
 GET    /api/search?q=garage              # Search breakers/devices
 GET    /api/map/light-to-breaker         # Device-to-breaker mapping
+GET    /panel-photo                      # Panel door photo (from ./data)
 ```
 
 ## 📊 Data Model

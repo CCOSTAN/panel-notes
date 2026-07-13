@@ -18,6 +18,7 @@ D17,Microwave,Switch,Kitchen microwave circuit,B7
 D9,Outdoor Front Lights,Light,Front porch/flood grouping,A2
 D10,Outdoor Sconces,Light,Garage/front sconces grouping,A2
 D20,Refrigerator,Switch,Kitchen refrigerator circuit,A1
+DEV-hW25tM,Rheem Water Heater,Water Heater,,"B4,A6"
 D12,Upstairs Lights,Light,Upstairs hall and landing grouping,A18
 D21,Washer,Switch,Laundry washer circuit,A15
-DEV-hW25tM,Rheem Water Heater,Water Heater,,"B4,A6"
+DEV-NAGeAF,Air Conditioner (Small),Device,,"B3,A5"

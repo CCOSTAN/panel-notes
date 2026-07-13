@@ -576,3 +576,39 @@ textarea:focus {
     padding-bottom: 100px;
   }
 }
+
+.app-footer {
+  margin-top: var(--space-xl);
+  border: 1px solid var(--glass-border);
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.footer-links a {
+  color: var(--color-muted);
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.25);
+  padding-bottom: 1px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: var(--color-text);
+  border-bottom-color: rgba(56, 189, 248, 0.7);
+}
+
+.footer-copy {
+  opacity: 0.85;
+}

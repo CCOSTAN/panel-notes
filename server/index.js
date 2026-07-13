@@ -23,6 +23,7 @@ const PORT = process.env.PORT || 8080;
 const distPath = path.resolve(__dirname, '..', 'dist');
 const indexFile = path.join(distPath, 'index.html');
 const hasBuiltClient = fs.existsSync(indexFile);
+const panelPhotoPath = path.resolve(__dirname, '..', 'data', 'actual Panel.jpg');
 
 app.use(cors());
 app.use(express.json());
@@ -89,6 +90,13 @@ app.get('/api/map/light-to-breaker', async (req, res) => {
   const mapping = await getLightToBreakerMap(deviceId);
   if (!mapping) return res.status(404).json({ error: 'Mapping not found' });
   res.json(mapping);
+});
+
+app.get('/panel-photo', (_req, res) => {
+  if (!fs.existsSync(panelPhotoPath)) {
+    return res.status(404).send('Panel photo not found.');
+  }
+  res.sendFile(panelPhotoPath);
 });
 
 app.use(express.static(distPath));
