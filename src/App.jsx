@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   createDevice,
-  getAppConfig,
   getBreakers,
   getDevices,
   saveBreaker,
@@ -80,13 +79,10 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchResults, setSearchResults] = useState({ breakers: [], devices: [] });
-  const [readOnly, setReadOnly] = useState(false);
 
   useEffect(() => {
     (async () => {
       try {
-        const config = await getAppConfig();
-        setReadOnly(Boolean(config.readOnly));
         await refreshData();
       } catch (err) {
         setError(err.message);
@@ -181,10 +177,7 @@ export default function App() {
       <header className="topbar">
         <div className="topbar-title">
           <p className="eyebrow">Panel Notes</p>
-          <div className="title-row">
-            <h1>Main Panel</h1>
-            {readOnly && <span className="mode-badge">Read-only</span>}
-          </div>
+          <h1>Main Panel</h1>
         </div>
         <div className="topbar-actions">
           {tabs.map((tab) => (
@@ -200,13 +193,6 @@ export default function App() {
       </header>
 
       {error && <div className="toast error">⚠️ {error}</div>}
-
-      {readOnly && (
-        <aside className="shared-view-notice">
-          <strong>Shared panel directory</strong>
-          <span>Circuit labels are reference notes. Verify the circuit at the panel before work.</span>
-        </aside>
-      )}
 
       <main className="layout">
         <section className="primary-pane">
@@ -228,7 +214,6 @@ export default function App() {
               onCreateDevice={handleCreateDevice}
               onUpdateDevice={handleUpdateDevice}
               onDeleteDevice={handleDeleteDevice}
-              readOnly={readOnly}
               onSelectBreaker={(id) => {
                 setSelectedBreakerId(id);
                 setView('dashboard');
@@ -312,7 +297,6 @@ export default function App() {
             <BreakerDetail
               breaker={selectedBreaker}
               devices={devices}
-              readOnly={readOnly}
               onSave={async (payload) => {
                 await handleSaveBreaker(payload);
                 setShowEditor(false);

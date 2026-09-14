@@ -10,7 +10,6 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=8080
 ENV DATA_DIR=/app/data
-ENV READ_ONLY=false
 COPY package*.json ./
 RUN npm ci --omit=dev
 COPY --from=builder /app/dist ./dist

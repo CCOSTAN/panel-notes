@@ -15,10 +15,6 @@ async function fetchJson(path, options = {}) {
   return text ? JSON.parse(text) : null;
 }
 
-export async function getAppConfig() {
-  return fetchJson('/api/config');
-}
-
 export async function getBreakers() {
   return fetchJson('/api/breakers');
 }

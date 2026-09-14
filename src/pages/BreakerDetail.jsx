@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { slotNumber } from '../utils/slots.js';
 
-export default function BreakerDetail({ breaker, devices, onSave, readOnly = false }) {
+export default function BreakerDetail({ breaker, devices, onSave }) {
   const [form, setForm] = useState(() => ({
     label: '',
     load_type: 'Unknown',
@@ -43,49 +43,6 @@ export default function BreakerDetail({ breaker, devices, onSave, readOnly = fal
       }),
     [devices, form.linkedDeviceIds]
   );
-
-  if (readOnly) {
-    return (
-      <article className="card detail-card shared-breaker-detail">
-        <div className="detail-header">
-          <div>
-            <p className="eyebrow">
-              Breaker {slotNumber(breaker)}
-              {breaker.side}
-            </p>
-            <h2>{breaker.label || 'Unnamed breaker'}</h2>
-          </div>
-          <span className="mode-badge">Reference</span>
-        </div>
-        <dl className="detail-facts">
-          <div>
-            <dt>Load type</dt>
-            <dd>{breaker.load_type || 'Unknown'}</dd>
-          </div>
-          <div>
-            <dt>Status</dt>
-            <dd>{breaker.status || 'Active'}</dd>
-          </div>
-        </dl>
-        <section className="detail-section">
-          <h3>Notes</h3>
-          <p>{breaker.notes || 'No notes recorded.'}</p>
-        </section>
-        <section className="detail-section">
-          <h3>Linked devices</h3>
-          {linkedDevices.length ? (
-            <div className="pill-list">
-              {linkedDevices.map((device) => (
-                <span key={device.id} className="pill">{device.name}</span>
-              ))}
-            </div>
-          ) : (
-            <p className="muted">No devices linked.</p>
-          )}
-        </section>
-      </article>
-    );
-  }
 
   function removeDevice(deviceId) {
     setForm((prev) => ({

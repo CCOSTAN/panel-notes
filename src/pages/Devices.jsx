@@ -8,8 +8,7 @@ export default function DevicesPage({
   onCreateDevice,
   onUpdateDevice,
   onDeleteDevice,
-  onSelectBreaker,
-  readOnly = false
+  onSelectBreaker
 }) {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name: '', type: '', notes: '', linkedBreakers: [] });
@@ -63,7 +62,7 @@ export default function DevicesPage({
             <p className="eyebrow">Devices</p>
             <h2>Lights / Devices</h2>
           </div>
-          {!readOnly && <button onClick={() => setOpen(!open)}>{open ? 'Close' : 'Add Device'}</button>}
+          <button onClick={() => setOpen(!open)}>{open ? 'Close' : 'Add Device'}</button>
         </div>
         {open && (
           <form className="form-grid" onSubmit={handleCreate}>
@@ -114,7 +113,6 @@ export default function DevicesPage({
             onUpdate={onUpdateDevice}
             onDelete={onDeleteDevice}
             onSelectBreaker={onSelectBreaker}
-            readOnly={readOnly}
           />
         ))}
       </div>
