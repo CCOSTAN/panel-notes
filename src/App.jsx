@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   createDevice,
+  getAppConfig,
   getBreakers,
   getDevices,
   saveBreaker,
@@ -79,10 +80,13 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchResults, setSearchResults] = useState({ breakers: [], devices: [] });
+  const [readOnly, setReadOnly] = useState(false);
 
   useEffect(() => {
     (async () => {
       try {
+        const config = await getAppConfig();
+        setReadOnly(Boolean(config.readOnly));
         await refreshData();
       } catch (err) {
         setError(err.message);
@@ -175,9 +179,12 @@ export default function App() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <div>
+        <div className="topbar-title">
           <p className="eyebrow">Panel Notes</p>
-          <h1>Main Panel</h1>
+          <div className="title-row">
+            <h1>Main Panel</h1>
+            {readOnly && <span className="mode-badge">Read-only</span>}
+          </div>
         </div>
         <div className="topbar-actions">
           {tabs.map((tab) => (
@@ -194,6 +201,13 @@ export default function App() {
 
       {error && <div className="toast error">⚠️ {error}</div>}
 
+      {readOnly && (
+        <aside className="shared-view-notice">
+          <strong>Shared panel directory</strong>
+          <span>Circuit labels are reference notes. Verify the circuit at the panel before work.</span>
+        </aside>
+      )}
+
       <main className="layout">
         <section className="primary-pane">
           {loading ? (
@@ -201,8 +215,7 @@ export default function App() {
           ) : view === 'dashboard' ? (
             <Dashboard
               breakers={breakers}
-              onSelect={(id) => setSelectedBreakerId(id)}
-              onEdit={(id) => {
+              onOpen={(id) => {
                 setSelectedBreakerId(id);
                 setShowEditor(true);
               }}
@@ -215,9 +228,11 @@ export default function App() {
               onCreateDevice={handleCreateDevice}
               onUpdateDevice={handleUpdateDevice}
               onDeleteDevice={handleDeleteDevice}
+              readOnly={readOnly}
               onSelectBreaker={(id) => {
                 setSelectedBreakerId(id);
                 setView('dashboard');
+                setShowEditor(true);
               }}
             />
           ) : (
@@ -229,6 +244,7 @@ export default function App() {
               onSelectBreaker={(id) => {
                 setSelectedBreakerId(id);
                 setView('dashboard');
+                setShowEditor(true);
               }}
             />
           )}
@@ -252,7 +268,7 @@ export default function App() {
 
       <footer className="app-footer">
         <div className="footer-links">
-          <span className="footer-copy">c {new Date().getFullYear()} vCloudInfo.com</span>
+          <span className="footer-copy">© {new Date().getFullYear()} vCloudInfo.com</span>
           <a href="https://www.vcloudinfo.com" target="_blank" rel="noopener noreferrer">
             Home
           </a>
@@ -285,13 +301,18 @@ export default function App() {
             }}
           >
             <div className="modal-close">
-              <button className="ghost" onClick={() => setShowEditor(false)}>
+              <button
+                className="ghost"
+                aria-label="Close breaker details"
+                onClick={() => setShowEditor(false)}
+              >
                 ✕
               </button>
             </div>
             <BreakerDetail
               breaker={selectedBreaker}
               devices={devices}
+              readOnly={readOnly}
               onSave={async (payload) => {
                 await handleSaveBreaker(payload);
                 setShowEditor(false);

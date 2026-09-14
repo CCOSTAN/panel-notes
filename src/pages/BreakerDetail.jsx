@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { slotNumber } from '../utils/slots.js';
 
-export default function BreakerDetail({ breaker, devices, onSave, readOnly = false, onRequestEdit }) {
+export default function BreakerDetail({ breaker, devices, onSave, readOnly = false }) {
   const [form, setForm] = useState(() => ({
     label: '',
     load_type: 'Unknown',
@@ -44,6 +44,49 @@ export default function BreakerDetail({ breaker, devices, onSave, readOnly = fal
     [devices, form.linkedDeviceIds]
   );
 
+  if (readOnly) {
+    return (
+      <article className="card detail-card shared-breaker-detail">
+        <div className="detail-header">
+          <div>
+            <p className="eyebrow">
+              Breaker {slotNumber(breaker)}
+              {breaker.side}
+            </p>
+            <h2>{breaker.label || 'Unnamed breaker'}</h2>
+          </div>
+          <span className="mode-badge">Reference</span>
+        </div>
+        <dl className="detail-facts">
+          <div>
+            <dt>Load type</dt>
+            <dd>{breaker.load_type || 'Unknown'}</dd>
+          </div>
+          <div>
+            <dt>Status</dt>
+            <dd>{breaker.status || 'Active'}</dd>
+          </div>
+        </dl>
+        <section className="detail-section">
+          <h3>Notes</h3>
+          <p>{breaker.notes || 'No notes recorded.'}</p>
+        </section>
+        <section className="detail-section">
+          <h3>Linked devices</h3>
+          {linkedDevices.length ? (
+            <div className="pill-list">
+              {linkedDevices.map((device) => (
+                <span key={device.id} className="pill">{device.name}</span>
+              ))}
+            </div>
+          ) : (
+            <p className="muted">No devices linked.</p>
+          )}
+        </section>
+      </article>
+    );
+  }
+
   function removeDevice(deviceId) {
     setForm((prev) => ({
       ...prev,
@@ -85,17 +128,6 @@ export default function BreakerDetail({ breaker, devices, onSave, readOnly = fal
           </p>
           <h2>Edit breaker</h2>
         </div>
-        {readOnly && (
-          <button
-            className="chip-button"
-            type="button"
-            onClick={() => {
-              onRequestEdit?.();
-            }}
-          >
-            Edit
-          </button>
-        )}
       </div>
       <form className="form-grid" onSubmit={handleSubmit}>
         <label>
@@ -103,7 +135,6 @@ export default function BreakerDetail({ breaker, devices, onSave, readOnly = fal
           <input
             value={form.label}
             onChange={(e) => setForm({ ...form, label: e.target.value })}
-            disabled={readOnly}
           />
         </label>
         <label className="full">
@@ -111,7 +142,6 @@ export default function BreakerDetail({ breaker, devices, onSave, readOnly = fal
           <textarea
             value={form.notes}
             onChange={(e) => setForm({ ...form, notes: e.target.value })}
-            disabled={readOnly}
           />
         </label>
 
@@ -124,36 +154,32 @@ export default function BreakerDetail({ breaker, devices, onSave, readOnly = fal
               {linkedDevices.map((device) => (
                 <span key={device.id} className="pill">
                   {device.name}
-                  {!readOnly && (
-                    <button
-                      type="button"
-                      className="pill-remove"
-                      onClick={() => removeDevice(device.id)}
-                      aria-label={`Remove ${device.name}`}
-                    >
-                      ×
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    className="pill-remove"
+                    onClick={() => removeDevice(device.id)}
+                    aria-label={`Remove ${device.name}`}
+                  >
+                    ×
+                  </button>
                 </span>
               ))}
             </div>
           )}
-          {!readOnly && (
-            <div className="actions">
-              <button
-                type="button"
-                className="chip-button"
-                disabled={unassignedDevices.length === 0}
-                onClick={() => setShowDevicePicker(true)}
-              >
-                Add devices{unassignedDevices.length ? ` (${unassignedDevices.length})` : ''}
-              </button>
-            </div>
-          )}
+          <div className="actions">
+            <button
+              type="button"
+              className="chip-button"
+              disabled={unassignedDevices.length === 0}
+              onClick={() => setShowDevicePicker(true)}
+            >
+              Add devices{unassignedDevices.length ? ` (${unassignedDevices.length})` : ''}
+            </button>
+          </div>
         </fieldset>
 
         <div className="actions full">
-          <button type="submit" disabled={readOnly}>
+          <button type="submit">
             Save breaker
           </button>
         </div>
@@ -161,7 +187,7 @@ export default function BreakerDetail({ breaker, devices, onSave, readOnly = fal
 
       <div className="divider" />
 
-      {showDevicePicker && !readOnly && (
+      {showDevicePicker && (
         <div
           className="modal-backdrop"
           onClick={() => {

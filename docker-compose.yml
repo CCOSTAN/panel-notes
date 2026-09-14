@@ -7,5 +7,6 @@ services:
     environment:
       - PORT=8080
       - DATA_DIR=/app/data
+      - READ_ONLY=false
     volumes:
       - ./data:/app/data

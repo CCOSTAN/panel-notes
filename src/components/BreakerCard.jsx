@@ -1,15 +1,14 @@
 import React from 'react';
 import { slotNumber } from '../utils/slots.js';
 
-export default function BreakerCard({ breaker, selected, onSelect, onEdit }) {
+export default function BreakerCard({ breaker, selected, onOpen }) {
   if (!breaker) return null;
   const displayNumber = `${slotNumber(breaker)}${breaker.side}`;
 
   return (
     <button
       className={`breaker-card ${selected ? 'selected' : ''}`}
-      onClick={() => onSelect?.(breaker.id)}
-      onDoubleClick={() => onEdit?.(breaker.id)}
+      onClick={() => onOpen?.(breaker.id)}
       aria-pressed={selected}
     >
       <div className="breaker-card__header">

@@ -2,7 +2,6 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import express from 'express';
-import cors from 'cors';
 import {
   createDevice,
   getBreaker,
@@ -24,12 +23,35 @@ const distPath = path.resolve(__dirname, '..', 'dist');
 const indexFile = path.join(distPath, 'index.html');
 const hasBuiltClient = fs.existsSync(indexFile);
 const panelPhotoPath = path.resolve(__dirname, '..', 'data', 'actual Panel.jpg');
+const readOnly = ['1', 'true', 'yes', 'on'].includes(String(process.env.READ_ONLY || '').toLowerCase());
 
-app.use(cors());
-app.use(express.json());
+app.disable('x-powered-by');
+app.use((req, res, next) => {
+  if (readOnly) {
+    res.set({
+      'Cache-Control': 'private, no-store',
+      'Referrer-Policy': 'no-referrer',
+      'X-Content-Type-Options': 'nosniff',
+      'X-Robots-Tag': 'noindex, nofollow, noarchive'
+    });
+  }
+  next();
+});
+app.use(express.json({ limit: '32kb' }));
+
+app.get('/api/config', (_req, res) => {
+  res.json({ readOnly });
+});
+
+app.use('/api', (req, res, next) => {
+  if (readOnly && !['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
+    return res.status(403).json({ error: 'This shared panel view is read-only.' });
+  }
+  next();
+});
 
 app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, service: 'panel-notes', timestamp: new Date().toISOString() });
+  res.json({ ok: true, service: 'panel-notes', readOnly, timestamp: new Date().toISOString() });
 });
 
 app.get('/api/breakers', async (_req, res) => {

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { slotNumber } from '../utils/slots.js';
 
-export default function DeviceRow({ device, breakers = [], onUpdate, onDelete, onSelectBreaker }) {
+export default function DeviceRow({ device, breakers = [], onUpdate, onDelete, onSelectBreaker, readOnly = false }) {
   const [editing, setEditing] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const [pickerSelection, setPickerSelection] = useState(new Set());
@@ -160,15 +160,17 @@ export default function DeviceRow({ device, breakers = [], onUpdate, onDelete, o
                 <span className="muted" style={{ fontSize: '0.65rem' }}>Not linked</span>
               )}
             </div>
-            <div className="actions" style={{ marginTop: 0 }}>
-              <button
-                className="ghost"
-                style={{ padding: '4px 8px', fontSize: '0.75rem' }}
-                onClick={() => setEditing(true)}
-              >
-                Edit
-              </button>
-            </div>
+            {!readOnly && (
+              <div className="actions" style={{ marginTop: 0 }}>
+                <button
+                  className="ghost"
+                  style={{ padding: '4px 8px', fontSize: '0.75rem' }}
+                  onClick={() => setEditing(true)}
+                >
+                  Edit
+                </button>
+              </div>
+            )}
           </div>
         </div >
       )

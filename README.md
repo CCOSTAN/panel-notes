@@ -12,7 +12,7 @@ Got new garage lights? Need to know what's behind breaker B8? Panel Notes is the
 
 **The goal is simple:**
 - 👀 See the whole panel at a glance (odd on the left, even on the right)
-- 📝 Double-click any breaker to see its label, notes, and linked devices
+- 📝 Tap or click any breaker to see its label, notes, and linked devices
 - 📱 Open the app instantly from a QR code taped to the panel
 
 <div align="center">
@@ -27,6 +27,7 @@ Got new garage lights? Need to know what's behind breaker B8? Panel Notes is the
 - ✏️ **Modal editor** — breaker label + notes + linked devices, all in one place
 - 📄 **CSV-backed data** — edit or back it up with any text editor
 - 🔌 **Simple REST API** — ready for future integrations (Home Assistant, anyone?)
+- 👷 **Read-only deployment mode** — share the directory without exposing edit APIs
 
 ## 🛠️ Tech Stack
 
@@ -79,6 +80,13 @@ cp .env.example .env
 **Environment Variables:**
 - `PORT` – API/web port inside container (default: `8080`)
 - `DATA_DIR` – CSV storage path inside container (default: `/app/data`)
+- `READ_ONLY` – set to `true` for a shared view; the UI hides editing and the server rejects every non-read API request
+
+### Public read-only deployment
+
+Keep the normal container on the LAN for household editing. For a worker-facing public hostname, run a second instance with `READ_ONLY=true`, do not publish its Docker port, mount the same data directory with `:ro`, and route only that container through the reverse proxy or tunnel. The shared response includes `noindex` and `no-store` headers.
+
+Do not publish the normal editable container. A QR code containing a private IP address continues to work on the LAN, but a separate QR or link using the public hostname is required away from home.
 
 ## 📡 API Reference
 

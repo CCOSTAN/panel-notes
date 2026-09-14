@@ -1,7 +1,7 @@
 import React from 'react';
 import BreakerCard from '../components/BreakerCard.jsx';
 
-export default function Dashboard({ breakers, selectedId, onSelect, onEdit }) {
+export default function Dashboard({ breakers, selectedId, onOpen }) {
   // Physical layout: odd-number slots (1,3,5...) on the left, even (2,4,6...) on the right.
   // Within each number, show A then B (1A, 1B | 2A, 2B).
   const lookup = new Map(breakers.map((b) => [`${b.side}${b.row}`, b]));
@@ -33,8 +33,7 @@ export default function Dashboard({ breakers, selectedId, onSelect, onEdit }) {
         key={breaker.id}
         breaker={breaker}
         selected={breaker.id === selectedId}
-        onSelect={onSelect}
-        onEdit={onEdit}
+        onOpen={onOpen}
       />
     ));
   }
