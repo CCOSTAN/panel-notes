@@ -6,8 +6,8 @@ Panel Notes is a mobile-first, CSV-backed electrical breaker mapping application
 - **Stack**: React (Frontend) + Express (Backend).
 - **Storage**: Flat CSV files in `./data` (`breakers.csv`, `devices.csv`).
 - **Path**: `/home/hass/docker_files/panel-notes`
-- **Compose Service**: `panel_notes` (defined in the root `docker-compose.yaml`).
-- **Command**: `ssh -o RemoteCommand=none -o RequestTTY=no -T docker69 "cd /home/hass/docker_files && docker compose up -d --build panel_notes"`
+- **Compose Services**: `panel_notes` is the LAN editor; `panel_notes_public` is the edge-only read-only origin. Both are defined in the root `docker-compose.yaml`.
+- **Command**: `ssh -o RemoteCommand=none -o RequestTTY=no -T docker69 "cd /home/hass/docker_files && docker compose up -d --build panel_notes panel_notes_public"`
 
 ## Design System (Glassmorphism)
 The app uses a modern "Glassmorphism" aesthetic:
@@ -26,4 +26,4 @@ The app uses a modern "Glassmorphism" aesthetic:
 ## Core Logic
 - **Append-Only (mostly)**: Backend mostly appends/updates CSV rows.
 - **Data Dir**: App data lives at `./panel-notes/data` (bind mounted to `/app/data` in container).
-- **Port**: Runs on port 8080 internally and externally on `docker_69`; keep `http://192.168.10.69:8080` stable because the physical panel QR code points there.
+- **Port**: Keep the LAN editor at `http://192.168.10.69:8080` because the physical panel QR code points there. The public origin must not publish a host port and must keep `READ_ONLY=true`, its root filesystem read-only, and the shared data mount read-only.
