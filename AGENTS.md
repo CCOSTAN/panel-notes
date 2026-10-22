@@ -4,6 +4,7 @@
 Panel Notes is a mobile-first, CSV-backed electrical breaker mapping application. It allows tracking of which devices (lights, outlets, appliances) are connected to specific breakers in a physical electrical panel.
 
 - **Stack**: React (Frontend) + Express (Backend).
+- **Runtime**: Node 24 LTS, minimum 24.22.1 for the October 2026 security release; both Docker stages reject an older cached base.
 - **Storage**: Flat CSV files in `./data` (`breakers.csv`, `devices.csv`).
 - **Path**: `/home/hass/docker_files/panel-notes`
 - **Compose Service**: `panel_notes` is the LAN editor defined in the root `docker-compose.yaml`.
