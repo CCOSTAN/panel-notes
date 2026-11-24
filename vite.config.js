@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+  // Retain the browser targets used by the previous production build.
+  build: { target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'] },
   server: {
     port: 5173,
     proxy: {

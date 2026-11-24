@@ -3,6 +3,7 @@ RUN node -e "const v=process.versions.node.split('.').map(Number); if(v[0]<24 ||
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
+RUN npm audit --include=dev --audit-level=moderate
 COPY . .
 RUN npm run build
 
