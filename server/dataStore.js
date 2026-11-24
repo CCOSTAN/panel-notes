@@ -271,8 +271,21 @@ export async function deleteDevice(id) {
 }
 
 export async function searchEntities(query) {
-  const q = query.toLowerCase();
+  const q = query.trim().toLowerCase();
+  if (!q) return { breakers: [], devices: [] };
   const [breakers, devices] = await Promise.all([getBreakersWithDevices(), getDevices()]);
+
+  // The panel displays 1A, while saved links use A1.
+  const slot = q.replace(/^breaker\s+/, '').replace(/^#\s*/, '');
+  const breaker = breakers.find((b) =>
+    b.id.toLowerCase() === slot || `${b.row}${b.side}`.toLowerCase() === slot
+  );
+  if (breaker) {
+    return {
+      breakers: [breaker],
+      devices: devices.filter((d) => d.linked_breakers.includes(breaker.id))
+    };
+  }
 
   const breakerMatches = breakers.filter((b) => {
     return (
