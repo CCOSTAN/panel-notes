@@ -14,6 +14,9 @@ ENV PORT=8080
 ENV DATA_DIR=/app/data
 COPY package*.json ./
 RUN npm ci --omit=dev
+RUN npm audit --omit=dev --audit-level=moderate \
+    && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack \
+              /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/server ./server
 COPY --from=builder /app/data ./data
