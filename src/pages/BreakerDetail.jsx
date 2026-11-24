@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import HomeAssistantPicker from '../components/HomeAssistantPicker.jsx';
 import { slotNumber } from '../utils/slots.js';
 
 export default function BreakerDetail({ breaker, devices, onSave }) {
@@ -9,6 +10,9 @@ export default function BreakerDetail({ breaker, devices, onSave }) {
     tags: [],
     linkedDeviceIds: []
   }));
+  const [haPicks, setHaPicks] = useState([]);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
   const [showDevicePicker, setShowDevicePicker] = useState(false);
   const [pickerSelection, setPickerSelection] = useState(new Set());
 
@@ -22,6 +26,7 @@ export default function BreakerDetail({ breaker, devices, onSave }) {
         linkedDeviceIds: breaker.linked_devices?.map((d) => d.id) || []
       });
       setPickerSelection(new Set());
+      setHaPicks([]);
     }
   }, [breaker]);
 
@@ -70,9 +75,19 @@ export default function BreakerDetail({ breaker, devices, onSave }) {
     setShowDevicePicker(false);
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    onSave({ ...form });
+    if (saving) return;
+    setSaving(true);
+    setSaveError('');
+    try {
+      await onSave({ ...form, previousLinkedDeviceIds: breaker.linked_devices.map(d => d.id),
+        homeAssistantDeviceIds: haPicks.map(d => d.id) });
+    } catch (err) {
+      setSaveError(err.message);
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -104,10 +119,16 @@ export default function BreakerDetail({ breaker, devices, onSave }) {
 
         <fieldset className="breaker-select full">
           <legend>Linked devices</legend>
-          {linkedDevices.length === 0 ? (
+          {linkedDevices.length + haPicks.length === 0 ? (
             <p className="muted">No devices linked.</p>
           ) : (
             <div className="pill-list">
+              {haPicks.map(device => (
+                <span key={device.id} className="pill">{device.name}
+                  <button type="button" className="pill-remove" aria-label={`Remove ${device.name}`}
+                    onClick={() => setHaPicks(picks => picks.filter(d => d.id !== device.id))}>×</button>
+                </span>
+              ))}
               {linkedDevices.map((device) => (
                 <span key={device.id} className="pill">
                   {device.name}
@@ -133,10 +154,21 @@ export default function BreakerDetail({ breaker, devices, onSave }) {
               Add devices{unassignedDevices.length ? ` (${unassignedDevices.length})` : ''}
             </button>
           </div>
+          <HomeAssistantPicker
+            excludedIds={new Set([...form.linkedDeviceIds, ...haPicks.map(d => 'HA-' + d.id)])}
+            onPick={device => {
+              const localId = 'HA-' + device.id;
+              if (devices.some(d => d.id === localId)) {
+                setForm(prev => ({ ...prev, linkedDeviceIds: [...prev.linkedDeviceIds, localId] }));
+              } else {
+                setHaPicks(prev => [...prev, device]);
+              }
+            }} />
         </fieldset>
 
         <div className="actions full">
-          <button type="submit">
+          {saveError && <p role="alert">{saveError}</p>}
+          <button type="submit" disabled={saving}>
             Save breaker
           </button>
         </div>

@@ -33,7 +33,7 @@ const usePullToRefreshReload = () => {
     const isAtTop = () => (window.scrollY || document.documentElement.scrollTop || 0) <= 0;
 
     const onTouchStart = (e) => {
-      if (!isAtTop()) return;
+      if (!isAtTop() || e.target.closest?.('form, .modal-backdrop')) return;
       if (!e.touches || e.touches.length !== 1) return;
       startY = e.touches[0].clientY;
       triggered = false;
@@ -108,31 +108,19 @@ export default function App() {
 
   async function handleSaveBreaker(payload) {
     if (!selectedBreaker) return;
-    try {
-      const updated = await saveBreaker(selectedBreaker.id, payload);
-      const nextBreakers = breakers.map((b) => (b.id === updated.id ? updated : b));
-      setBreakers(nextBreakers);
-      const refreshedDevices = await getDevices();
-      setDevices(refreshedDevices);
-      setError('');
-    } catch (err) {
-      setError(err.message);
-    }
+    const updated = await saveBreaker(selectedBreaker.id, payload);
+    const refreshedDevices = await getDevices();
+    setDevices(refreshedDevices);
+    setBreakers(prev => prev.map(b => b.id === updated.id ? updated : b));
+    setError('');
   }
 
   async function handleCreateDevice(payload) {
-    try {
-      const created = await createDevice(payload);
-      setDevices([...devices, created]);
-      if (payload.linkedBreakers?.length) {
-        await refreshData();
-      }
-      setError('');
-      return created;
-    } catch (err) {
-      setError(err.message);
-      return null;
-    }
+    const created = await createDevice(payload);
+    setDevices(prev => [...prev.filter(d => d.id !== created.id), created]);
+    if (payload.linkedBreakers?.length) await refreshData();
+    setError('');
+    return created;
   }
 
   async function handleUpdateDevice(id, payload) {
@@ -301,7 +289,6 @@ export default function App() {
                 await handleSaveBreaker(payload);
                 setShowEditor(false);
               }}
-              onCreateDevice={handleCreateDevice}
             />
           </div>
         </div>

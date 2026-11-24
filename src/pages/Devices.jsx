@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import HomeAssistantPicker from '../components/HomeAssistantPicker.jsx';
 import DeviceRow from '../components/DeviceRow.jsx';
 import { slotNumber } from '../utils/slots.js';
 
@@ -10,6 +11,8 @@ export default function DevicesPage({
   onDeleteDevice,
   onSelectBreaker
 }) {
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name: '', type: '', notes: '', linkedBreakers: [] });
 
@@ -30,6 +33,12 @@ export default function DevicesPage({
     [breakers]
   );
 
+  function closeForm() {
+    setOpen(false);
+    setSaveError('');
+    setForm({ name: '', type: '', notes: '', linkedBreakers: [] });
+  }
+
   function toggleBreaker(breakerId) {
     setForm((prev) => {
       const set = new Set(prev.linkedBreakers);
@@ -41,16 +50,23 @@ export default function DevicesPage({
 
   async function handleCreate(e) {
     e.preventDefault();
+    if (saving) return;
+    setSaving(true);
+    setSaveError('');
     const payload = {
+      homeAssistantDeviceId: form.homeAssistantDeviceId,
       name: form.name,
       type: form.type || 'Device',
       notes: form.notes,
       linkedBreakers: form.linkedBreakers
     };
-    const created = await onCreateDevice(payload);
-    if (created) {
-      setForm({ name: '', type: '', notes: '', linkedBreakers: [] });
-      setOpen(false);
+    try {
+      await onCreateDevice(payload);
+      closeForm();
+    } catch (err) {
+      setSaveError(err.message);
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -62,10 +78,16 @@ export default function DevicesPage({
             <p className="eyebrow">Devices</p>
             <h2>Lights / Devices</h2>
           </div>
-          <button onClick={() => setOpen(!open)}>{open ? 'Close' : 'Add Device'}</button>
+          <button onClick={() => open ? closeForm() : setOpen(true)}>{open ? 'Close' : 'Add Device'}</button>
         </div>
         {open && (
           <form className="form-grid" onSubmit={handleCreate}>
+            <HomeAssistantPicker excludedIds={new Set(devices.map(d => d.id))}
+              onPick={device => setForm(prev => ({ ...prev, name: device.name, homeAssistantDeviceId: device.id }))} />
+            {form.homeAssistantDeviceId && <button type="button" className="ghost"
+              onClick={() => setForm(prev => ({ ...prev, name: '', homeAssistantDeviceId: undefined }))}>
+              Clear Home Assistant selection
+            </button>}
             <label>
               Name
               <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
@@ -94,10 +116,11 @@ export default function DevicesPage({
               </div>
             </fieldset>
             <div className="actions">
-              <button type="button" className="ghost" onClick={() => setOpen(false)}>
+              <button type="button" className="ghost" onClick={closeForm}>
                 Cancel
               </button>
-              <button type="submit">Create</button>
+              {saveError && <p role="alert">{saveError}</p>}
+              <button type="submit" disabled={saving}>Create</button>
             </div>
           </form>
         )}

@@ -1,4 +1,5 @@
 import path from 'path';
+import { getHomeAssistantCatalog } from './haCatalog.js';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import express from 'express';
@@ -31,6 +32,23 @@ app.get('/api/health', (_req, res) => {
   res.json({ ok: true, service: 'panel-notes', timestamp: new Date().toISOString() });
 });
 
+app.get('/api/home-assistant/devices', async (_req, res, next) => {
+  try {
+    res.set('Cache-Control', 'no-store').json(await getHomeAssistantCatalog());
+  } catch (err) {
+    next(err);
+  }
+});
+
+// CSV updates share a read/modify/write cycle across editor routes.
+let pendingWrite = Promise.resolve();
+function writeRoute(handler) {
+  return (req, res, next) => {
+    const operation = pendingWrite.then(() => handler(req, res));
+    pendingWrite = operation.catch(next);
+  };
+}
+
 app.get('/api/breakers', async (_req, res) => {
   const breakers = await getBreakersWithDevices();
   res.json(breakers);
@@ -42,22 +60,22 @@ app.get('/api/breaker/:id', async (req, res) => {
   res.json(breaker);
 });
 
-app.put('/api/breaker/:id', async (req, res) => {
+app.put('/api/breaker/:id', writeRoute(async (req, res) => {
   const breaker = await updateBreaker(req.params.id, req.body);
   if (!breaker) return res.status(404).json({ error: 'Breaker not found' });
   res.json(breaker);
-});
+}));
 
 app.get('/api/devices', async (_req, res) => {
   const devices = await getDevices();
   res.json(devices);
 });
 
-app.post('/api/device', async (req, res) => {
+app.post('/api/device', writeRoute(async (req, res) => {
   if (!req.body?.name) return res.status(400).json({ error: 'name is required' });
   const device = await createDevice(req.body);
   res.status(201).json(device);
-});
+}));
 
 app.get('/api/device/:id', async (req, res) => {
   const device = await getDevice(req.params.id);
@@ -65,17 +83,17 @@ app.get('/api/device/:id', async (req, res) => {
   res.json(device);
 });
 
-app.put('/api/device/:id', async (req, res) => {
+app.put('/api/device/:id', writeRoute(async (req, res) => {
   const device = await updateDevice(req.params.id, req.body);
   if (!device) return res.status(404).json({ error: 'Device not found' });
   res.json(device);
-});
+}));
 
-app.delete('/api/device/:id', async (req, res) => {
+app.delete('/api/device/:id', writeRoute(async (req, res) => {
   const ok = await deleteDevice(req.params.id);
   if (!ok) return res.status(404).json({ error: 'Device not found' });
   res.status(204).send();
-});
+}));
 
 app.get('/api/search', async (req, res) => {
   const q = req.query.q;
@@ -106,6 +124,12 @@ app.get('*', (_req, res) => {
       .send('Panel Notes API is running. Build the client with "npm run build" to serve the UI from /dist.');
   }
   res.sendFile(indexFile);
+});
+
+app.use((err, _req, res, next) => {
+  if (res.headersSent) return next(err);
+  const status = err.status || 500;
+  res.status(status).json({ error: status < 500 || status === 503 ? err.message : 'Could not save panel data.' });
 });
 
 app.listen(PORT, () => {

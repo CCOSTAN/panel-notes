@@ -1,4 +1,5 @@
 import fs from 'fs/promises';
+import { findHomeAssistantDevices, panelDeviceId } from './haCatalog.js';
 import path from 'path';
 import { parse } from 'csv-parse/sync';
 import { stringify } from 'csv-stringify/sync';
@@ -32,7 +33,16 @@ async function readCsv(filePath) {
 
 async function writeCsv(filePath, records, columns) {
   const output = stringify(records, { header: true, columns });
-  await fs.writeFile(filePath, output, 'utf8');
+  const temporary = filePath + '.' + nanoid() + '.tmp';
+  try {
+    const original = await fs.stat(filePath);
+    await fs.writeFile(temporary, output, { encoding: 'utf8', flag: 'wx', mode: original.mode });
+    if (process.getuid?.() === 0) await fs.chown(temporary, original.uid, original.gid);
+    await fs.chmod(temporary, original.mode);
+    await fs.rename(temporary, filePath);
+  } finally {
+    await fs.rm(temporary, { force: true });
+  }
 }
 
 function normalizeBreaker(row) {
@@ -156,12 +166,18 @@ export async function updateBreaker(id, payload) {
 
   if (payload.linkedDeviceIds) {
     const linkedSet = new Set(payload.linkedDeviceIds);
+    const originalLinks = new Set(payload.previousLinkedDeviceIds || devices.map(d => d.id));
+    const newIds = [...new Set(payload.homeAssistantDeviceIds || [])];
+    const existingIds = new Set(devices.map(device => device.id));
+    const missingIds = newIds.filter(registryId => !existingIds.has(panelDeviceId(registryId)));
+    devices.push(...await findHomeAssistantDevices(missingIds));
+    for (const registryId of newIds) linkedSet.add(panelDeviceId(registryId));
     devices.forEach((device) => {
       const hasLink = linkedSet.has(device.id);
       const existing = new Set(device.linked_breakers);
-      if (hasLink) {
+      if (hasLink && (!payload.previousLinkedDeviceIds || !originalLinks.has(device.id))) {
         existing.add(id);
-      } else {
+      } else if (!hasLink && originalLinks.has(device.id)) {
         existing.delete(id);
       }
       device.linked_breakers = Array.from(existing);
@@ -174,11 +190,21 @@ export async function updateBreaker(id, payload) {
 
 export async function createDevice(payload) {
   const devices = await getDevices();
-  const id = payload.id || `DEV-${nanoid(6)}`;
+  const haId = payload.homeAssistantDeviceId;
+  const id = haId ? panelDeviceId(haId) : payload.id || `DEV-${nanoid(6)}`;
   const linked_breakers = (payload.linked_breakers || payload.linkedBreakers || [])
     .map((b) => b.trim())
     .filter(Boolean);
 
+  const existing = devices.find(d => d.id === id);
+  if (existing) {
+    if (!haId) throw Object.assign(new Error('Device ID already exists.'), { status: 409 });
+    existing.linked_breakers = [...new Set([...existing.linked_breakers, ...linked_breakers])];
+    await saveDevices(devices);
+    if (linked_breakers.length) await updateBreakerLinksFromDevice(existing);
+    return existing;
+  }
+  if (haId) await findHomeAssistantDevices([haId]);
   const device = {
     id,
     name: payload.name,

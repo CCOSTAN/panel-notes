@@ -6,8 +6,8 @@ async function fetchJson(path, options = {}) {
     ...options
   });
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || res.statusText);
+    const body = await res.json().catch(() => null);
+    throw new Error(body?.error || res.statusText);
   }
   // Some endpoints (e.g., DELETE 204) return no JSON body
   if (res.status === 204) return null;
@@ -25,6 +25,10 @@ export async function getBreaker(id) {
 
 export async function saveBreaker(id, payload) {
   return fetchJson(`/api/breaker/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+}
+
+export async function getHomeAssistantCatalog() {
+  return fetchJson('/api/home-assistant/devices');
 }
 
 export async function getDevices() {

@@ -301,6 +301,49 @@ h3 {
   animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.modal-card:has(.ha-picker) {
+  max-height: min(90dvh, 760px);
+  overscroll-behavior: contain;
+}
+
+.ha-picker, .ha-picker__panel, .ha-picker__results {
+  display: grid;
+  min-width: 0;
+  gap: var(--space-sm);
+}
+
+.ha-picker {
+  margin-block: var(--space-sm);
+}
+
+.ha-picker__results {
+  max-height: min(32dvh, 18rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.ha-picker input, .ha-picker button {
+  min-height: 44px;
+  font-size: 1rem;
+}
+
+.ha-picker__result {
+  display: grid;
+  gap: 2px;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.ha-picker__result small { color: var(--color-muted); }
+.ha-picker button:focus-visible { outline: 2px solid var(--color-accent); }
+.form-grid:has(.ha-picker), .form-grid:has(.ha-picker) fieldset { min-width: 0; }
+
+@media (pointer: coarse) {
+  .form-grid:has(.ha-picker) .actions button,
+  .form-grid:has(.ha-picker) .breaker-select__item,
+  .form-grid:has(.ha-picker) .pill-remove { min-height: 44px; min-width: 44px; }
+}
+
 .modal-close {
   position: absolute;
   top: var(--space-sm);

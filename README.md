@@ -80,6 +80,18 @@ cp .env.example .env
 - `PORT` – API/web port inside container (default: `8080`)
 - `DATA_DIR` – CSV storage path inside container (default: `/app/data`)
 
+## Home Assistant device picker
+
+Open a breaker, tap **Choose from Home Assistant**, search by name, room, or model, and tap **Save breaker**. You can also start in **Lights / Devices → Add Device**. Manual entries and their existing links work with or without the catalog. Each imported device uses its Home Assistant registry ID so repeated selections reuse its Panel Notes record.
+
+To enable the picker, run the included exporter on a trusted host with read access to the Home Assistant device, area and entity registry files. Supply the registry directory and a private output path, for example:
+
+```sh
+python3 tools/export_ha_devices.py "$HA_REGISTRY_DIR" "$CATALOG_DIR/devices.json"
+```
+
+Run the exporter periodically and mount the output directory read-only at `/catalog` in the Panel Notes service. The web app reads the catalog from `/catalog/devices.json` (override with `HA_DEVICE_CATALOG`). It contains device IDs, display names, rooms and models. Identical entries also show an entity ID or device ID suffix. Keep it on the trusted network. A failed refresh preserves the previous catalog, and the picker shows the last refresh time when it is over an hour old.
+
 ## 📡 API Reference
 
 Simple endpoints, ready for integrations:
